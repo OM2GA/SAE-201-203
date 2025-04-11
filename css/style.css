@@ -28,6 +28,11 @@ body {
     align-items: center;
 }
 
+.container {
+    max-width: 600px; /* Augmentation de la largeur maximale */
+    padding: 20px;
+}
+
 .footer {
     background-color: #1E90FF;
     color: white;
@@ -76,16 +81,15 @@ body {
 }
 
 .login-container {
-    max-width: 400px;
-    margin: 50px auto;
-    padding: 20px;
     background-color: #D9D9D9;
     border-radius: 10px;
+    padding: 20px;
 }
 
 .login-container h2 {
     color: black;
     font-weight: bold;
+    text-align: center;
 }
 
 .login-container .form-group label {
@@ -110,4 +114,8 @@ body {
 .login-container .forgot-password a {
     color: black;
     font-style: italic;
+}
+.forgot-password {
+    text-align: center;
+    margin-top: 15px;
 }
