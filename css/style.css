@@ -7,7 +7,14 @@ body {
     display: flex;
     flex-direction: column;
     font-family: Arial, sans-serif;
+    background-image: url('../images/iut_meaux.webp');
+    background-size: cover; /* Cela permet de couvrir toute la page */
+    background-position: center; /* Centre l'image */
+    background-repeat: no-repeat; /* Empêche la répétition de l'image */
+    background-attachment: fixed; /* Fixe l'image de fond lors du défilement */
 }
+
+
 
 .header {
     background-color: #1E90FF;
