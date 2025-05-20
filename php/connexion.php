@@ -1,0 +1,117 @@
+<?php
+session_start(); // Démarrer la session
+
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "prêt materiel";
+
+// Créer une connexion
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Vérifier la connexion
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Vérifier si le formulaire a été soumis
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $email = $_POST['email'];
+    $motDePasse = $_POST['motDePasse'];
+
+    // Préparer et exécuter la requête SQL pour vérifier l'utilisateur
+    $sql = "SELECT id, mot_de_passe FROM utilisateurs WHERE email = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows == 1) {
+        $row = $result->fetch_assoc();
+        if (password_verify($motDePasse, $row['mot_de_passe'])) {
+            // Mot de passe correct, démarrer la session
+            $_SESSION['user_id'] = $row['id'];
+            echo "Connexion réussie!";
+            // Rediriger vers une page sécurisée
+            header("Location: accueil.php");
+            exit();
+        } else {
+            $error = "Mot de passe incorrect.";
+        }
+    } else {
+        $error = "Aucun utilisateur trouvé avec cet email.";
+    }
+
+    // Fermer la connexion
+    $stmt->close();
+    $conn->close();
+}
+?>
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Se connecter | Emprunt</title>
+    <link rel="icon" href="../images/favicon.ico" type="image/x-icon">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="header">
+        <img src="../images/logo_universite.png" alt="Logo Université">
+    </div>
+    <div class="main-container">
+        <div class="container">
+            <div class="login-container">
+                <h2>Connexion</h2>
+                <?php if (isset($error)): ?>
+                    <div class="alert alert-danger"><?php echo $error; ?></div>
+                <?php endif; ?>
+                <form method="POST" action="connexion.php">
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" placeholder="Entrez votre adresse email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="motDePasse">Mot de passe</label>
+                        <input type="password" class="form-control" id="motDePasse" name="motDePasse" placeholder="Entrez votre mot de passe" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Se connecter</button>
+                </form>
+                <div class="forgot-password">
+                    Pas encore de compte ? <a href="inscription.php">Inscrivez-vous</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="footer">
+        <div class="footer-section">
+            <h4>Qui sommes-nous ?</h4>
+            <a href="https://www.univ-gustave-eiffel.fr/">Université Gustave Eiffel</a>
+            <a href="https://www.univ-gustave-eiffel.fr/formation/des-pedagogies-innovantes/">Centre d'Innovation Pédagogique et Numérique (CIPEN)</a>
+        </div>
+        <div class="footer-section">
+            <h4>Support</h4>
+            <a href="http://www.u-pem.fr/campus-numerique-ip/assistance/?tx_ttnews%5Bcat%5D=99&cHash=c936e533f67cbaaddda01752716910d3">FAQs</a>
+            <a href="http://www.u-pem.fr/universite/mentions-legales/">Privacy</a>
+        </div>
+        <div class="footer-section">
+            <h4>Restons en contact</h4>
+            <p>Vous pouvez nous contacter au 01 60 95 72 54, du lundi au vendredi de 9h à 17h ou par courriel</p>
+            <p>cipen@univ-eiffel.fr</p>
+        </div>
+        <div class="footer-section">
+            <h4>Suivez-nous</h4>
+            <div class="social-media">
+                <a href="https://www.facebook.com/UniversiteGustaveEiffel/"><img src="../images/facebook.png" alt="Facebook"></a>
+                <a href="https://twitter.com/UGustaveEiffel"><img src="../images/twitter.png" alt="Twitter"></a>
+                <a href="https://www.linkedin.com/company/universit%C3%A9-gustave-eiffel/"><img src="../images/linkedin.png" alt="LinkedIn"></a>
+                <a href="https://www.instagram.com/universitegustaveeiffel/"><img src="../images/instagram.png" alt="Instagram"></a>
+                <a href="https://www.youtube.com/channel/UCNMF04xs6lEAeFZ8TO6s2dw"><img src="../images/youtube.png" alt="YouTube"></a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
