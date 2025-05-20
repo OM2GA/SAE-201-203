@@ -77,6 +77,102 @@
                             </div>
                         </div>
                     </div>
+                    
+                    <!-- Matériel 5 -->
+                    <div class="col-md-6 mb-4">
+                        <div class="card">
+                            <img src="../images/cable.JPG" class="card-img-top" alt="Cable">
+                            <div class="card-body">
+                                <h5 class="card-title">Câble</h5>
+                                <p class="card-text">Câble pour faire du streaming.</p>
+                                <a href="reserver.html" class="btn btn-primary">Réserver</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Matériel 6 -->
+                    <div class="col-md-6 mb-4">
+                        <div class="card">
+                            <img src="../images/casque_et_manettes_vr.jpg" class="card-img-top" alt="Casque et manettes vr ">
+                            <div class="card-body">
+                                <h5 class="card-title">Casque et Manettes VR</h5>
+                                <p class="card-text">Casque et Manettes VR pour jouer ou travailler.</p>
+                                <a href="reserver.html" class="btn btn-primary">Réserver</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Matériel 7 -->
+                    <div class="col-md-6 mb-4">
+                        <div class="card">
+                            <img src="../images/casque_micro.jpg" class="card-img-top" alt="Casque micro">
+                            <div class="card-body">
+                                <h5 class="card-title">Casque micro</h5>
+                                <p class="card-text">Casque micro, pour écouter le son et parler.</p>
+                                <a href="reserver.html" class="btn btn-primary">Réserver</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Matériel 8 -->
+                    <div class="col-md-6 mb-4">
+                        <div class="card">
+                            <img src="../images/go_pro.jpg" class="card-img-top" alt="go pro">
+                            <div class="card-body">
+                                <h5 class="card-title">GoPro</h5>
+                                <p class="card-text">Pour se filmer.</p>
+                                <a href="reserver.html" class="btn btn-primary">Réserver</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Matériel 9 -->
+                    <div class="col-md-6 mb-4">
+                        <div class="card">
+                            <img src="../images/trepied_haut.jpg" class="card-img-top" alt="trépied haut ">
+                            <div class="card-body">
+                                <h5 class="card-title">Trépied haut</h5>
+                                <p class="card-text">Un morceau d'équipement pour le trépied.</p>
+                                <a href="reserver.html" class="btn btn-primary">Réserver</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Matériel 10 -->
+                    <div class="col-md-6 mb-4">
+                        <div class="card">
+                            <img src="../images/trepied_bas.jpg" class="card-img-top" alt="trépied bas">
+                            <div class="card-body">
+                                <h5 class="card-title">Trépied bas</h5>
+                                <p class="card-text">Un morceau de d'équipement pour le trépied.</p>
+                                <a href="reserver.html" class="btn btn-primary">Réserver</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Matériel 11 -->
+                    <div class="col-md-6 mb-4">
+                        <div class="card">
+                            <img src="../images/video_projecteur.jpg" class="card-img-top" alt="vidéo projecteur">
+                            <div class="card-body">
+                                <h5 class="card-title">Vidéo projecteur</h5>
+                                <p class="card-text">Vidéo  projecteur qui permet de projeter des images et des sons.</p>
+                                <a href="reserver.html" class="btn btn-primary">Réserver</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Matériel 12 -->
+                    <div class="col-md-6 mb-4">
+                        <div class="card">
+                            <img src="../images/camera_360.jpg" class="card-img-top" alt="caméra 360° ">
+                            <div class="card-body">
+                                <h5 class="card-title">Caméra 360°</h5>
+                                <p class="card-text">Caméra 360° qui permet de filmer tout autour d'elle même.</p>
+                                <a href="reserver.html" class="btn btn-primary">Réserver</a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
             </div>

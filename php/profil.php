@@ -40,6 +40,13 @@ if ($result->num_rows == 1) {
     $adresse = $row['adresse_postale'];
     $naissance = $row['date_naissance'];
     $role = $row['role'];
+    $groupe_td = $row['groupe_td'];
+    $groupe_tp = $row['groupe_tp'];
+
+    // Calculer l'âge
+    $date_naissance = new DateTime($naissance);
+    $aujourdhui = new DateTime();
+    $age = $aujourdhui->diff($date_naissance)->y;
 } else {
     // Rediriger vers la page de connexion si l'utilisateur n'est pas trouvé
     header("Location: connexion.php");
@@ -60,6 +67,7 @@ $conn->close();
     <link rel="icon" href="../images/favicon.ico" type="image/x-icon">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../css/style.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 </head>
 <body>
     <!-- HEADER -->
@@ -78,7 +86,7 @@ $conn->close();
                     </ol>
                 </nav>
                 <h2>Mon profil</h2>
-                <form>
+                <form id="profilForm">
                     <div class="form-group">
                         <label for="prenom">Prénom</label>
                         <input type="text" class="form-control" id="prenom" value="<?php echo $prenom; ?>" disabled>
@@ -89,21 +97,30 @@ $conn->close();
                     </div>
                     <div class="form-group">
                         <label for="email">Adresse email</label>
-                        <input type="email" class="form-control" id="email" value="<?php echo $email; ?>" disabled>
+                        <input type="email" class="form-control" id="email" name="email" value="<?php echo $email; ?>">
                     </div>
                     <div class="form-group">
                         <label for="adresse">Adresse postale</label>
-                        <input type="text" class="form-control" id="adresse" value="<?php echo $adresse; ?>" disabled>
+                        <input type="text" class="form-control" id="adresse" name="adresse" value="<?php echo $adresse; ?>">
                     </div>
                     <div class="form-group">
                         <label for="naissance">Date de naissance</label>
                         <input type="date" class="form-control" id="naissance" value="<?php echo $naissance; ?>" disabled>
+                        <small class="form-text text-muted">Âge: <?php echo $age; ?> ans</small>
                     </div>
                     <div class="form-group">
                         <label for="role">Rôle</label>
                         <input type="text" class="form-control" id="role" value="<?php echo $role; ?>" disabled>
                     </div>
-                    <a href="modifier_profil.php" class="btn btn-primary btn-block mt-4">Modifier mon profil</a>
+                    <div class="form-group">
+                        <label for="groupe_td">Groupe de TD</label>
+                        <input type="text" class="form-control" id="groupe_td" value="<?php echo $groupe_td; ?>" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label for="groupe_tp">Groupe de TP</label>
+                        <input type="text" class="form-control" id="groupe_tp" value="<?php echo $groupe_tp; ?>" disabled>
+                    </div>
+                    <button type="button" id="updateProfile" class="btn btn-primary btn-block mt-4">Mettre à jour mon profil</button>
                 </form>
             </div>
         </div>
@@ -136,5 +153,29 @@ $conn->close();
             </div>
         </div>
     </div>
+
+    <script>
+    $(document).ready(function() {
+        $('#updateProfile').click(function() {
+            var email = $('#email').val();
+            var adresse = $('#adresse').val();
+
+            $.ajax({
+                url: 'mettre_a_jour_profil.php',
+                type: 'POST',
+                data: {
+                    email: email,
+                    adresse: adresse
+                },
+                success: function(response) {
+                    alert('Profil mis à jour avec succès!');
+                },
+                error: function(xhr, status, error) {
+                    alert('Erreur lors de la mise à jour du profil.');
+                }
+            });
+        });
+    });
+    </script>
 </body>
 </html>
