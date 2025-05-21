@@ -81,7 +81,7 @@ $conn->close();
                 <!-- FIL D'ARIANE -->
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb bg-light px-3 py-2 rounded">
-                        <li class="breadcrumb-item"><a href="accueil.php">Accueil</a></li>
+                        <li class="breadcrumb-item"><a href="<?php echo ($role == 'administrateur') ? 'accueil_admin.php' : 'accueil.php'; ?>">Accueil</a></li>
                         <li class="breadcrumb-item active" aria-current="page">Profil</li>
                     </ol>
                 </nav>

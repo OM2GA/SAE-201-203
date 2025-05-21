@@ -1,6 +1,6 @@
 <?php
 session_start();
-if (!isset($_SESSION['user_id'])) {
+if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'administrateur') {
     header("Location: connexion.php");
     exit();
 }
@@ -15,24 +15,19 @@ if ($conn->connect_error) {
     die("Erreur de connexion: " . $conn->connect_error);
 }
 
-$user_id = $_SESSION['user_id'];
-
-$sql = "SELECT r.*, m.designation 
+$sql = "SELECT r.*, u.nom, u.prenom, m.designation 
         FROM reservations r
+        JOIN utilisateurs u ON r.user_id = u.id
         JOIN materiels m ON r.materiel_id = m.id
-        WHERE r.user_id = ?
         ORDER BY r.date DESC";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
-$result = $stmt->get_result();
+$result = $conn->query($sql);
 ?>
 
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Mon historique | Emprunt</title>
+    <title>Gestion des réservations | Emprunt</title>
     <link rel="icon" href="../images/favicon.ico" type="image/x-icon">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../css/style.css">
@@ -45,41 +40,53 @@ $result = $stmt->get_result();
     <div class="main-container">
         <div class="container">
             <div class="login-container">
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb bg-light px-3 py-2 rounded">
-                        <li class="breadcrumb-item"><a href="accueil.php">Accueil</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Historique</li>
-                    </ol>
-                </nav>
-
-                <h2>Historique de mes réservations</h2>
+                <h2 class="mb-4">Gestion des réservations</h2>
 
                 <?php if ($result->num_rows === 0): ?>
-                    <div class="alert alert-info mt-4 text-center">
-                        Vous n'avez encore effectué aucune réservation.
+                    <div class="alert alert-info text-center">
+                        Aucune réservation n'a été effectuée pour le moment.
                     </div>
                 <?php else: ?>
-                    <div class="table-responsive mt-4">
-                        <table class="table table-bordered table-striped table-hover">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped">
                             <thead class="thead-light">
                                 <tr>
+                                    <th>Étudiant</th>
+                                    <th>Matériel</th>
                                     <th>Date</th>
                                     <th>Créneau</th>
-                                    <th>Matériel</th>
+                                    <th>Motif</th>
                                     <th>État</th>
-                                    <th>Commentaire</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php while ($row = $result->fetch_assoc()): ?>
                                     <tr>
+                                        <td><?= htmlspecialchars($row['prenom'] . " " . $row['nom']) ?></td>
+                                        <td><?= htmlspecialchars($row['designation']) ?></td>
                                         <td><?= htmlspecialchars($row['date']) ?></td>
                                         <td><?= htmlspecialchars($row['horaire']) ?></td>
-                                        <td><?= htmlspecialchars($row['designation']) ?></td>
-                                        <td class="<?= $row['statut'] === 'validée' ? 'text-success' : ($row['statut'] === 'refusée' ? 'text-danger' : 'text-warning') ?>">
-                                            <?= ucfirst($row['statut']) ?>
+                                        <td><?= nl2br(htmlspecialchars($row['motif'])) ?></td>
+                                        <td>
+                                            <?php
+                                                $statut = $row['statut'];
+                                                $class = $statut === 'validée' ? 'text-success' : ($statut === 'refusée' ? 'text-danger' : 'text-warning');
+                                                echo "<span class='$class'>" . ucfirst($statut) . "</span>";
+                                            ?>
                                         </td>
-                                        <td><?= nl2br(htmlspecialchars($row['commentaire_admin'])) ?></td>
+                                        <td>
+                                            <?php if ($statut === 'en attente'): ?>
+                                                <form method="POST" action="valider_reservation.php" class="form-inline">
+                                                    <input type="hidden" name="reservation_id" value="<?= $row['id'] ?>">
+                                                    <input type="text" name="commentaire_admin" class="form-control mb-2 mr-2" placeholder="Commentaire">
+                                                    <button type="submit" name="action" value="valider" class="btn btn-success btn-sm mr-2">Valider</button>
+                                                    <button type="submit" name="action" value="refuser" class="btn btn-danger btn-sm">Refuser</button>
+                                                </form>
+                                            <?php else: ?>
+                                                <?= nl2br(htmlspecialchars($row['commentaire_admin'])) ?>
+                                            <?php endif; ?>
+                                        </td>
                                     </tr>
                                 <?php endwhile; ?>
                             </tbody>
@@ -121,7 +128,4 @@ $result = $stmt->get_result();
 </body>
 </html>
 
-<?php
-$stmt->close();
-$conn->close();
-?>
+<?php $conn->close(); ?>

@@ -1,82 +1,42 @@
-<?php
-session_start(); // Démarrer la session
-
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "prêt materiel";
-
-// Créer une connexion
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Vérifier la connexion
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-
-// Récupérer les informations du matériel depuis la base de données
-$sql = "SELECT * FROM materiels";
-$result = $conn->query($sql);
-?>
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Matériel disponible | Emprunt</title>
+    <title>Accueil Admin | Emprunt</title>
     <link rel="icon" href="../images/favicon.ico" type="image/x-icon">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
-    <!-- HEADER -->
     <div class="header">
         <img src="../images/logo_universite.png" alt="Logo Université">
     </div>
 
-    <!-- MAIN -->
     <div class="main-container">
-        <div class="container">
+        <div class="container text-center">
             <div class="login-container">
+                <h2>Bienvenue, Administrateur</h2>
+                <p class="mt-4">Vous êtes connecté avec succès !</p>
 
-                <!-- FIL D'ARIANE -->
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb bg-light px-3 py-2 rounded">
-                        <li class="breadcrumb-item"><a href="accueil.php">Accueil</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Matériel</li>
-                    </ol>
-                </nav>
-
-                <h2>Matériel disponible</h2>
-
-                <div class="row mt-4">
-                    <?php
-                    if ($result->num_rows > 0) {
-                        // Afficher chaque matériel
-                        while($row = $result->fetch_assoc()) {
-                            echo '<div class="col-md-6 mb-4">';
-                            echo '<div class="card">';
-                            echo '<img src="../images/' . $row['photo'] . '" class="card-img-top" alt="' . $row['designation'] . '">';
-                            echo '<div class="card-body">';
-                            echo '<h5 class="card-title">' . $row['designation'] . '</h5>';
-                            echo '<p class="card-text">' . $row['descriptif'] . '</p>';
-                            echo '<a href="reserver.php" class="btn btn-primary">Réserver</a>';
-                            echo '</div>';
-                            echo '</div>';
-                            echo '</div>';
-                        }
-                    } else {
-                        echo "Aucun matériel disponible.";
-                    }
-                    ?>
+                <div class="row mt-5">
+                    <div class="col-md-6 mb-3">
+                        <a href="gestion_utilisateurs.php" class="btn btn-primary btn-block">Gérer les Utilisateurs</a>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <a href="gestion_materiels.php" class="btn btn-primary btn-block">Gérer les Matériels</a>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <a href="gestion_reservations.php" class="btn btn-primary btn-block">Gérer les Réservations</a>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <a href="profil.php" class="btn btn-primary btn-block">Mon profil</a>
+                    </div>
                 </div>
-
             </div>
         </div>
     </div>
 
-    <!-- FOOTER -->
     <div class="footer">
         <div class="footer-section">
             <h4>Qui sommes-nous ?</h4>
@@ -106,8 +66,3 @@ $result = $conn->query($sql);
     </div>
 </body>
 </html>
-
-<?php
-// Fermer la connexion
-$conn->close();
-?>

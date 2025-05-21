@@ -1,39 +1,50 @@
 <?php
-session_start(); // Démarrer la session
+session_start();
 
 $servername = "localhost";
 $username = "root";
 $password = "";
 $dbname = "prêt materiel";
 
-// Créer une connexion
 $conn = new mysqli($servername, $username, $password, $dbname);
-
-// Vérifier la connexion
 if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+    die("Erreur de connexion : " . $conn->connect_error);
 }
 
-// Vérifier si le formulaire a été soumis
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $email = $_POST['email'];
+    $email = trim($_POST['email']);
     $motDePasse = $_POST['motDePasse'];
 
-    // Préparer et exécuter la requête SQL pour vérifier l'utilisateur
-    $sql = "SELECT id, mot_de_passe FROM utilisateurs WHERE email = ?";
+    $sql = "SELECT id, nom, prenom, mot_de_passe, role FROM utilisateurs WHERE email = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("s", $email);
     $stmt->execute();
     $result = $stmt->get_result();
 
     if ($result->num_rows == 1) {
-        $row = $result->fetch_assoc();
-        if (password_verify($motDePasse, $row['mot_de_passe'])) {
-            // Mot de passe correct, démarrer la session
-            $_SESSION['user_id'] = $row['id'];
-            echo "Connexion réussie!";
-            // Rediriger vers une page sécurisée
-            header("Location: accueil.php");
+        $utilisateur = $result->fetch_assoc();
+
+        if (password_verify($motDePasse, $utilisateur['mot_de_passe'])) {
+            // Connexion réussie → Stockage en session
+            $_SESSION['user_id'] = $utilisateur['id'];
+            $_SESSION['user_role'] = $utilisateur['role'];
+            $_SESSION['user_nom'] = $utilisateur['nom'];
+            $_SESSION['user_prenom'] = $utilisateur['prenom'];
+
+            // Redirection selon le rôle
+            switch ($utilisateur['role']) {
+                case 'administrateur':
+                    header("Location: accueil_admin.php");
+                    break;
+                case 'enseignant':
+                    header("Location: accueil_enseignant.php");
+                    break;
+                case 'étudiant':
+                case 'agent':
+                default:
+                    header("Location: accueil.php");
+                    break;
+            }
             exit();
         } else {
             $error = "Mot de passe incorrect.";
@@ -42,7 +53,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $error = "Aucun utilisateur trouvé avec cet email.";
     }
 
-    // Fermer la connexion
     $stmt->close();
     $conn->close();
 }
@@ -52,7 +62,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Se connecter | Emprunt</title>
     <link rel="icon" href="../images/favicon.ico" type="image/x-icon">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
@@ -67,20 +76,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div class="login-container">
                 <h2>Connexion</h2>
                 <?php if (isset($error)): ?>
-                    <div class="alert alert-danger"><?php echo $error; ?></div>
+                    <div class="alert alert-danger"><?= $error ?></div>
                 <?php endif; ?>
                 <form method="POST" action="connexion.php">
                     <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" class="form-control" id="email" name="email" placeholder="Entrez votre adresse email" required>
+                        <label for="email">Adresse email</label>
+                        <input type="email" class="form-control" name="email" id="email" required placeholder="Ex : jean.dupont@univ.fr">
                     </div>
                     <div class="form-group">
                         <label for="motDePasse">Mot de passe</label>
-                        <input type="password" class="form-control" id="motDePasse" name="motDePasse" placeholder="Entrez votre mot de passe" required>
+                        <input type="password" class="form-control" name="motDePasse" id="motDePasse" required placeholder="********">
                     </div>
-                    <button type="submit" class="btn btn-primary">Se connecter</button>
+                    <button type="submit" class="btn btn-primary btn-block">Se connecter</button>
                 </form>
-                <div class="forgot-password">
+                <div class="forgot-password mt-3 text-center">
                     Pas encore de compte ? <a href="inscription.php">Inscrivez-vous</a>
                 </div>
             </div>
@@ -94,13 +103,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
         <div class="footer-section">
             <h4>Support</h4>
-            <a href="http://www.u-pem.fr/campus-numerique-ip/assistance/?tx_ttnews%5Bcat%5D=99&cHash=c936e533f67cbaaddda01752716910d3">FAQs</a>
-            <a href="http://www.u-pem.fr/universite/mentions-legales/">Privacy</a>
+            <a href="#">FAQs</a>
+            <a href="#">Mentions légales</a>
         </div>
         <div class="footer-section">
             <h4>Restons en contact</h4>
-            <p>Vous pouvez nous contacter au 01 60 95 72 54, du lundi au vendredi de 9h à 17h ou par courriel</p>
-            <p>cipen@univ-eiffel.fr</p>
+            <p>01 60 95 72 54<br>cipen@univ-eiffel.fr</p>
         </div>
         <div class="footer-section">
             <h4>Suivez-nous</h4>
